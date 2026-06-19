@@ -69,7 +69,7 @@ function Login() {
                 value={passwordLoginValue}
                 onChange={setPasswordLoginValue}
               />
-              <Button type="button" onClick={handleLogin}>
+              <Button variant="outline" type="button" onClick={handleLogin}>
                 Login
               </Button>
             </form>

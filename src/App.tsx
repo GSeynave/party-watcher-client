@@ -7,18 +7,40 @@ import Login from "./pages/login";
 import RoomPage from "./pages/RoomPage";
 import { useAuthContext } from "./context/AuthContext";
 
+function ShowMenu(isAuthenticated: boolean) {
+  if (isAuthenticated) {
+    return (
+      <>
+        <Link to="/rooms" className="flex-1">
+          Rooms
+        </Link>
+        <Link to="/logout" className="flex">
+          Disconnect
+        </Link>
+      </>
+    );
+  }
+  return (
+    <>
+      <Link to="/login">Login</Link>
+      <Link to="/register">Register</Link>
+    </>
+  );
+}
+
 function App() {
   const { user, loading, isAuthenticated } = useAuthContext();
   console.log("App component - user:", user);
   return (
     <>
       <div>
-        <div className="flex flex-row h-screen">
-          <nav className="flex flex-col gap-4 p-4 bg-gray-200">
-            <Link to="/">Home</Link>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-            <Link to="/rooms">Rooms</Link>
+        <div className="flex flex-col w-screen h-screen">
+          <nav className="flex flex-row gap-4 p-4 bg-gray-200">
+            <Link to="/" className="">
+              Home
+            </Link>
+
+            <ShowMenu isAuthenticated={isAuthenticated} />
           </nav>
           <div className="flex-1 p-4">
             <Routes>

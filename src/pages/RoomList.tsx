@@ -8,12 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { UserContext } from "../types/UserContext";
 import type { Room } from "../types/Room";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 type RoomsProps = {
   user?: UserContext;
@@ -55,54 +63,85 @@ function Rooms({ user }: RoomsProps) {
   }
 
   return (
-    <Card>
+    <Card className="flex flex-col w-screen h-screen border border-gray-300 rounded-lg shadow-md p-4">
       <CardHeader>
         <CardTitle className="text-2xl font-bold mb-4">Rooms</CardTitle>
+        <Dialog>
+          <DialogTrigger>
+            <Button variant="outline">Create a room</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold mb-2">
+                Create a room
+              </DialogTitle>
+              <DialogDescription className="flex flex-col gap-2">
+                Create and join your own room. Once created, it will be
+                available for others to join. You can also share the room link
+                with your friends.
+              </DialogDescription>
+            </DialogHeader>
+            <form className="flex flex-col gap-2">
+              <FieldGroup>
+                <Field>
+                  <FieldLabel>Room Name:</FieldLabel>
+                  <Input
+                    type="text"
+                    value={newRoomName}
+                    onChange={(e) => setNewRoomName(e.target.value)}
+                  ></Input>
+                </Field>
+                <Field>
+                  <FieldLabel>Video URL (YouTube embed link):</FieldLabel>
+                  <Input
+                    type="text"
+                    value={newRoomUrl}
+                    onChange={(e) => setNewRoomUrl(e.target.value)}
+                  ></Input>
+                </Field>
+
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleCreateRoom}
+                >
+                  Create Room
+                </Button>
+              </FieldGroup>
+            </form>
+          </DialogContent>
+        </Dialog>
       </CardHeader>
 
       <CardContent>
-        <h3>Create a room:</h3>
-        <form>
-          <Label>
-            Room Name:
-            <Input
-              type="text"
-              value={newRoomName}
-              onChange={(e) => setNewRoomName(e.target.value)}
-            ></Input>
-          </Label>
-          <Label>
-            Room URL:
-            <Input
-              type="text"
-              value={newRoomUrl}
-              onChange={(e) => setNewRoomUrl(e.target.value)}
-            ></Input>
-          </Label>
-          <Button type="button" onClick={handleCreateRoom}>
-            Create Room
-          </Button>
-        </form>
-        <h3>Rooms :</h3>
         {rooms.length > 0 ? (
-          <ul>
+          <ul className="grid grid-cols-3 gap-4 w-screen p-4">
             {rooms.map((room: Room) => (
-              <Card key={room.id} className="flex-col mt-4 mb-4">
+              <Card
+                key={room.id}
+                className="w-9/10 flex-col mt-4 mb-4 border border-gray-300 rounded-lg shadow-md  p-4"
+              >
                 <CardHeader>
                   <CardTitle>{room.name}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p>{room.description}</p>
-                  <p>Current member watching: {room.memberCount}</p>
-                </CardContent>
-                <CardFooter>
+                <CardContent className="flex flex-row gap-2">
+                  <div className="w-2/5">Img preview.</div>
+                  <p className="w-2/5">
+                    {room.description ?? "No description provided."}{" "}
+                  </p>
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-1/5"
                     onClick={() => handleJoinRoom(room.id)}
                   >
                     Join Room
                   </Button>
+                </CardContent>
+                <CardFooter className="flex flex-row gap-1 justify-between">
+                  <p>
+                    Room owner: <i>Unknown</i>
+                  </p>
+                  <p>Current member watching: {room.memberCount}</p>
                 </CardFooter>
               </Card>
             ))}

@@ -95,7 +95,12 @@ function Register() {
               onChange={setConfirmPasswordValue}
             />
           </Label>
-          <Button type="button" onClick={handleRegister} className="mt-4">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={handleRegister}
+            className="mt-4"
+          >
             Register
           </Button>
         </form>

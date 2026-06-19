@@ -188,9 +188,11 @@ function RoomPage() {
           <YoutubeIframe url={room?.videoUrl || ""} />
         </div>
         <div className="flex flex-col rounded h-full w-1/5 border p-4">
-          <ScrollArea className="h-5/6" type="hover" ref={scrollAreaRef}>
-            {/*/ Turn this into a scrollable components -->
-             */}
+          <ScrollArea
+            className="flex-1 min-h-0"
+            type="hover"
+            ref={scrollAreaRef}
+          >
             {room?.messages?.map((message) => (
               <div key={message.id} className="border p-2 rounded">
                 <strong>{message.sender}</strong>: {message.content}
