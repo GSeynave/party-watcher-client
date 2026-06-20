@@ -27,13 +27,13 @@ async function getRoomById(roomId: string): Promise<Room> {
   }
 }
 
-async function getRooms(): Promise<{ rooms: Room[] | null }> {
+async function getRooms(): Promise<Room[]> {
   try {
     const response = await axiosInstance.get("/");
-    return response.data.rooms;
+    return response.data.rooms ?? [];
   } catch (error) {
     console.error("Error fetching room response:", error);
-    return null;
+    return [];
   }
 }
 

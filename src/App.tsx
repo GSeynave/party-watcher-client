@@ -6,8 +6,13 @@ import RoomList from "./pages/RoomList";
 import Login from "./pages/login";
 import RoomPage from "./pages/RoomPage";
 import { useAuthContext } from "./context/AuthContext";
+import Logout from "./pages/logout";
+import { roomsLoader } from "./loader/RoomsLoader";
 
-function ShowMenu(isAuthenticated: boolean) {
+interface ShowMenuProps {
+  isAuthenticated: boolean;
+}
+function ShowMenu(isAuthenticated: ShowMenuProps) {
   if (isAuthenticated) {
     return (
       <>
@@ -29,8 +34,7 @@ function ShowMenu(isAuthenticated: boolean) {
 }
 
 function App() {
-  const { user, loading, isAuthenticated } = useAuthContext();
-  console.log("App component - user:", user);
+  const { loading, isAuthenticated } = useAuthContext();
   return (
     <>
       <div>
@@ -46,12 +50,13 @@ function App() {
             <Routes>
               <Route
                 path="/rooms"
+                loader={roomsLoader}
                 element={
                   <Restricted
                     loading={loading}
                     isAuthenticated={isAuthenticated}
                   >
-                    <RoomList user={user} />
+                    <RoomList />
                   </Restricted>
                 }
               />
@@ -67,6 +72,7 @@ function App() {
                 }
               />
               <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
               <Route path="/register" element={<Register />} />
               <Route path="/*" element={<Login />} />
             </Routes>

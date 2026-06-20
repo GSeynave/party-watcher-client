@@ -1,47 +1,98 @@
+/// <reference types="youtube" />
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { loadYouTubeAPI } from "./loadYoutubeApi.js";
+
 type Props = {
   url: string;
 };
+
 function YoutubeIframe({ url }: Props) {
+  const iframeRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<YT.Player | null>(null);
+  const [error, setError] = useState<{
+    videoId: string;
+    message: string;
+  } | null>(null);
+  const videoId = useMemo(() => extractVideoId(url), [url]);
+
+  useEffect(() => {
+    if (!url || !videoId) return;
+
+    let cancelled = false;
+
+    loadYouTubeAPI()
+      .then((youtubeApi) => {
+        if (cancelled || !iframeRef.current) return;
+
+        playerRef.current = new youtubeApi.Player(iframeRef.current, {
+          height: "100%",
+          width: "100%",
+          videoId,
+          events: {
+            onReady: () => {
+              iframeRef.current?.classList.add("border-orange-500");
+            },
+            onStateChange: () => {
+              console.log("Player state changed");
+            },
+          },
+        });
+      })
+      .catch((apiError: unknown) => {
+        if (!cancelled) {
+          console.error(apiError);
+          setError({
+            videoId,
+            message: "Unable to load the YouTube player.",
+          });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      playerRef.current?.destroy();
+      playerRef.current = null;
+    };
+  }, [url, videoId]);
+
   if (!url) {
     return <div>No video URL provided.</div>;
   }
-  url = url.replace("watch?v=", "embed/");
-  const tag = document.createElement("script");
-  tag.id = "iframe-demo";
-  tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName("script")[0];
-  firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
 
-  var player;
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player("existing-iframe-example", {
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: () => {
-          console.log("Player state changed");
-        },
-      },
-    });
+  if (!videoId) {
+    return <div>Invalid YouTube URL.</div>;
   }
-  function onPlayerReady(event) {
-    document.getElementById("existing-iframe-example").style.borderColor =
-      "#FF6D00";
+
+  if (error?.videoId === videoId) {
+    return <div>{error.message}</div>;
   }
+
   return (
-    <>
-      {url !== "" ? (
-        <iframe
-          id="existing-iframe-example"
-          width="800"
-          height="600"
-          src={url}
-          className="border: solid 4px #37474F"
-        ></iframe>
-      ) : (
-        <div>Your video can't be played.</div>
-      )}
-    </>
+    <div
+      ref={iframeRef}
+      className="aspect-video h-full max-h-full w-full max-w-full border-4"
+    />
   );
+}
+
+function extractVideoId(url: string): string {
+  try {
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.hostname === "youtu.be") {
+      return parsedUrl.pathname.slice(1);
+    }
+
+    if (parsedUrl.pathname.startsWith("/embed/")) {
+      return parsedUrl.pathname.split("/")[2] ?? "";
+    }
+
+    return parsedUrl.searchParams.get("v") ?? "";
+  } catch {
+    const match = url.match(/(?:v=|\/embed\/|youtu\.be\/)([\w-]{11})/);
+    return match?.[1] ?? "";
+  }
 }
 
 export { YoutubeIframe };

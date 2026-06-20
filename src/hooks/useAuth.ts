@@ -11,6 +11,10 @@ function useAuth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  async function logout() {
+    window.localStorage.removeItem("token");
+    setUser(null);
+  }
   async function fetchUser() {
     setLoading(true);
     try {
@@ -31,7 +35,14 @@ function useAuth() {
     init();
   }, []);
 
-  return { user, loading, isAuthenticated: !!user, error, refetch: fetchUser };
+  return {
+    user,
+    loading,
+    isAuthenticated: !!user,
+    error,
+    refetch: fetchUser,
+    logout: logout,
+  };
 }
 
 export default useAuth;

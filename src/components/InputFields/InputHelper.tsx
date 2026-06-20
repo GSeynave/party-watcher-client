@@ -10,7 +10,11 @@ function validateEmail(value: string): string | null {
   return null;
 }
 
-export function EmailInput(props: any) {
+type EmailInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+export function EmailInput(props: EmailInputProps) {
   return <CustomInputField {...props} label="Email" validate={validateEmail} />;
 }
 
@@ -20,7 +24,12 @@ function validatePassword(value: string): string | null {
   }
   return null;
 }
-export function PasswordInput(props: any) {
+
+type PasswordInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+export function PasswordInput(props: PasswordInputProps) {
   return (
     <CustomInputField
       {...props}

@@ -143,7 +143,6 @@ function RoomPage() {
       await joinRoom();
     }
     init();
-    console.log("Initializing RoomPage with roomId:", roomId);
     connectToWebsocket();
     handleWebSocketConnect();
     handleWebSocketDisconnect();
@@ -184,7 +183,7 @@ function RoomPage() {
       </CardHeader>
 
       <CardContent className="flex flex-row gap-4 h-3/5">
-        <div className="flex justify-center items-center border p-4 rounded w-4/5">
+        <div className="flex h-full w-4/5 items-center justify-center rounded border">
           <YoutubeIframe url={room?.videoUrl || ""} />
         </div>
         <div className="flex flex-col rounded h-full w-1/5 border p-4">
@@ -229,7 +228,7 @@ function RoomPage() {
         <span>
           Websocket state : {connected ? "🟢 Connected" : "🔴 Disconnected"}
         </span>
-        <span>Users in room: {room?.memberCount?.length}</span>
+        <span>Users in room: {room?.memberCount}</span>
         <Button variant="outline" className="w-full" onClick={leaveRoom}>
           Leave Room
         </Button>

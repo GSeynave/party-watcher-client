@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import "../App.css";
 import RoomService from "../services/roomService";
 import {
@@ -16,39 +16,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { UserContext } from "../types/UserContext";
 import type { Room } from "../types/Room";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { useLoaderData } from "react-router";
 
-type RoomsProps = {
-  user?: UserContext;
-};
-
-function Rooms({ user }: RoomsProps) {
+function Rooms() {
   const navigate = useNavigate();
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomUrl, setNewRoomUrl] = useState(
     "https://www.youtube.com/embed/CNsghpC7Aig",
   );
-  const [rooms, setRooms] = useState<Room[]>([]);
-
-  const fetchRooms = useCallback(async () => {
-    try {
-      const response = await RoomService.getRooms();
-      console.log("Fetched rooms data:", response);
-      setRooms(response);
-    } catch (error) {
-      console.error("Error fetching rooms data:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("Rooms component - user:", user);
-    void fetchRooms();
-  }, [user, fetchRooms]);
+  const rooms = useLoaderData() as Room[];
 
   async function handleCreateRoom() {
     console.log("Create room with name:", newRoomName);

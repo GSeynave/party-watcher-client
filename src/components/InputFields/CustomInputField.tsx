@@ -1,5 +1,5 @@
+import { Field, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 type Props = {
   label: string;
   value: string;
@@ -17,14 +17,14 @@ function CustomInputField({
   const error = validate?.(value);
   return (
     <>
-      <Label>
-        {label}
+      <Field>
+        <FieldLabel>{label}</FieldLabel>
         <Input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
-      </Label>
+      </Field>
 
       {error && <p>{error}</p>}
     </>
