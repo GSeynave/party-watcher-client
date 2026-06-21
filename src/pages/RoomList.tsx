@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import RoomService from "../services/roomService";
 import {
@@ -21,15 +21,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { useLoaderData } from "react-router";
 
 function Rooms() {
   const navigate = useNavigate();
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomUrl, setNewRoomUrl] = useState(
     "https://www.youtube.com/embed/CNsghpC7Aig",
   );
-  const rooms = useLoaderData() as Room[];
+
+  useEffect(() => {
+    async function loadRooms() {
+      const response = await RoomService.getRooms();
+      setRooms(response);
+    }
+
+    loadRooms();
+  }, []);
 
   async function handleCreateRoom() {
     console.log("Create room with name:", newRoomName);
@@ -48,7 +56,7 @@ function Rooms() {
       <CardHeader>
         <CardTitle className="text-2xl font-bold mb-4">Rooms</CardTitle>
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button variant="outline">Create a room</Button>
           </DialogTrigger>
           <DialogContent>

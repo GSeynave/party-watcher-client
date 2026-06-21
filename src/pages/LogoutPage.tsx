@@ -2,7 +2,7 @@ import "../App.css";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
-function Logout() {
+function LogoutPage() {
   const navigate = useNavigate();
   const { logout } = useAuthContext();
 
@@ -22,4 +22,4 @@ function Logout() {
   return <></>;
 }
 
-export default Logout;
+export default LogoutPage;

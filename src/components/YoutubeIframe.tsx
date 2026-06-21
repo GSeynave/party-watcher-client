@@ -31,7 +31,7 @@ function YoutubeIframe({ url }: Props) {
           videoId,
           events: {
             onReady: () => {
-              iframeRef.current?.classList.add("border-orange-500");
+              iframeRef.current?.classList.add("border-black-500");
             },
             onStateChange: () => {
               console.log("Player state changed");
@@ -71,7 +71,7 @@ function YoutubeIframe({ url }: Props) {
   return (
     <div
       ref={iframeRef}
-      className="aspect-video h-full max-h-full w-full max-w-full border-4"
+      className="aspect-video h-full w-auto max-h-full max-w-full rounded-border border-4"
     />
   );
 }

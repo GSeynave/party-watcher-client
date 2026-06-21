@@ -11,7 +11,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthContext } from "@/context/AuthContext";
 import { FieldSet } from "@/components/ui/field";
-function Login() {
+function LoginPage() {
   const navigate = useNavigate();
   const [usernameLoginValue, setUsernameLoginValue] = useState("");
   const [passwordLoginValue, setPasswordLoginValue] = useState("");
@@ -78,4 +78,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;

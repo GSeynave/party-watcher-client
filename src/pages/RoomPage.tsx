@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
+import { Eye } from "lucide-react";
 import Api from "../services/roomService";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Room } from "../types/Room";
 import { Button } from "@/components/ui/button";
 import { getSocket, disconnectSocket } from "../socket";
@@ -17,21 +12,46 @@ import { Input } from "@/components/ui/input";
 import RoomService from "../services/roomService";
 import { YoutubeIframe } from "@/components/YoutubeIframe";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Message } from "@/types/Message";
+import { useAuthContext } from "@/context/AuthContext";
 
 function RoomPage() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const socket = getSocket();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [connected, setConnected] = useState(false);
   const [room, setRoom] = useState<Room>();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [userCount, setUserCount] = useState(0);
+
+  function appendMessage(message: Message) {
+    setMessages((prev) => {
+      const alreadyAdded = prev.some(
+        (existing) =>
+          existing.id === message.id ||
+          (existing.senderId === message.senderId &&
+            existing.content === message.content &&
+            Math.abs(existing.timestamp - message.timestamp) < 3000),
+      );
+
+      if (alreadyAdded) {
+        return prev;
+      }
+
+      return [...prev, message];
+    });
+  }
 
   async function joinRoom() {
     try {
       setConnected(false);
       await Api.joinRoom(roomId!);
       setConnected(true);
+      console.log("Joined room via API:", roomId);
+      socket.emit("joinRoom", roomId);
     } catch (error) {
       console.error("Error fetching room data:", error);
       setConnected(false);
@@ -42,25 +62,33 @@ function RoomPage() {
       const response = await Api.getRoomById(roomId!);
       console.log("Fetched room data:", response);
       setRoom(response);
+      setMessages(response.messages);
     } catch (error) {
       console.error("Error fetching room data:", error);
     }
   }
 
+  async function fetchRoomUserCount(roomId: string) {
+    try {
+      const response = await Api.getRoomUserCount(roomId);
+      console.log("Fetched count user:", response);
+      setUserCount(response);
+    } catch (error) {
+      console.error("Error fetching room data:", error);
+    }
+  }
   function connectToWebsocket() {
     socket.emit("connection");
   }
   function handleWebSocketConnect() {
     socket.on("connect", () => {
       setConnected(true);
-      console.log("Connected to WebSocket server with ID:", socket.id);
     });
   }
 
   function handleWebSocketDisconnect() {
     socket.on("disconnect", () => {
       setConnected(false);
-      console.log("Disconnected from WebSocket server");
     });
   }
 
@@ -71,38 +99,44 @@ function RoomPage() {
   }
 
   function handleUserJoined() {
-    socket.on("userJoined", (roomId: string) => {
-      console.log("A User Joined room:", roomId);
-      fetchRoom();
+    socket.on("userJoined", () => {
+      console.log("A new user has joined the room.");
+      fetchRoomUserCount(roomId!);
+      appendMessage({
+        id: `system-join-${Date.now()}`,
+        senderId: "system",
+        sender: "System",
+        content: "A new user has joined the room!",
+        timestamp: Date.now(),
+      });
       toast.success("A new user has joined the room!");
     });
   }
 
   function handleUserLeft() {
-    socket.on("userLeft", (roomId: string) => {
-      console.log("Left room:", roomId);
-      fetchRoom();
+    socket.on("userLeft", () => {
+      fetchRoomUserCount(roomId!);
+      appendMessage({
+        id: `system-left-${Date.now()}`,
+        senderId: "system",
+        sender: "System",
+        content: "A user has left the room.",
+        timestamp: Date.now(),
+      });
     });
   }
   function handleNewMessage() {
-    socket.on(
-      "newMessage",
-      (sender: string, content: string, timestamp: number) => {
-        console.log("WebSocket - Event Listend - [newMessage]: ", {
-          sender,
-          content,
-          timestamp,
-        });
-        fetchRoom(); // will need to be optimized, to only fetch messages, not the whole room data, but for now it's ok
-        toast(`New message from ${sender}: ${content}`);
-      },
-    );
-  }
-
-  function handleJoinRoom() {
-    // will not be needed, i'll handle on websocket event
-    console.log("Joining room via WebSocket:", roomId);
-    socket.emit("joinRoom", roomId);
+    socket.on("newMessage", ({ id, senderId, sender, content, timestamp }) => {
+      console.log("Received new message via WebSocket:");
+      const message: Message = {
+        id: id,
+        senderId: senderId,
+        sender: sender,
+        content: content,
+        timestamp: timestamp,
+      };
+      appendMessage(message);
+    });
   }
 
   function socketOffs() {
@@ -118,13 +152,14 @@ function RoomPage() {
   }
 
   useEffect(() => {
-    const scrollArea = scrollAreaRef.current?.querySelector(
-      "[data-radix-scroll-area-viewport]",
+    const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>(
+      "[data-slot='scroll-area-viewport']",
     );
-    if (scrollArea) {
-      scrollArea.scrollTop = scrollArea.scrollHeight;
+
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight;
     }
-  }, [room?.messages]);
+  }, [messages]);
 
   useEffect(() => {
     socket.on("heartbeatAck", (data) => {
@@ -141,6 +176,7 @@ function RoomPage() {
       }
       await fetchRoom();
       await joinRoom();
+      await fetchRoomUserCount(roomId);
     }
     init();
     connectToWebsocket();
@@ -150,7 +186,6 @@ function RoomPage() {
     handleUserJoined();
     handleUserLeft();
     handleNewMessage();
-    handleJoinRoom();
 
     return () => {
       socketOffs();
@@ -162,7 +197,7 @@ function RoomPage() {
     navigate("/rooms");
   }
 
-  function handleMessageSend() {
+  async function handleMessageSend() {
     if (!newMessage.trim()) {
       toast.error("Message cannot be empty");
       return;
@@ -171,35 +206,69 @@ function RoomPage() {
       toast.error("Message cannot exceed 500 characters");
       return;
     }
-    console.log("Sending message to room via WebSocket:", roomId, newMessage);
-    RoomService.sendMessage(roomId!, newMessage);
-    fetchRoom(); // will need to be optimized, to only fetch messages, not the whole room data, but for now it's ok
+    const content = newMessage.trim();
+    console.log("Sending message to room via WebSocket:", roomId, content);
+    const sent = await RoomService.sendMessage(roomId!, content);
+
+    if (!sent) {
+      toast.error("Message could not be sent");
+      return;
+    }
+
+    appendMessage({
+      id: `local-${Date.now()}`,
+      senderId: user?.userId ?? "me",
+      sender: user?.mail ?? "Me",
+      content,
+      timestamp: Date.now(),
+    });
     setNewMessage("");
   }
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
+    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+      <CardHeader className="flex shrink-0 flex-row gap-2">
         <CardTitle>Room: {room?.name}</CardTitle>
+        <span className="flex flex-row  gap-2 flex-1">
+          <Eye />
+          <div>{userCount}</div>
+          <span className={connected ? "text-green-600" : "text-red-600"}>
+            {connected ? "Connected" : "Disconnected"}
+          </span>
+        </span>
+        <div className="flex flex-row gap-2">
+          <Button
+            variant="outline"
+            className="w-full bg-red-500 text-white hover:bg-red-600"
+            onClick={leaveRoom}
+          >
+            Leave Room
+          </Button>
+        </div>
       </CardHeader>
 
-      <CardContent className="flex flex-row gap-4 h-3/5">
-        <div className="flex h-full w-4/5 items-center justify-center rounded border">
+      <CardContent className="flex min-h-0 flex-1 flex-row gap-4 overflow-hidden">
+        <div className="flex min-h-0 w-4/5 items-center justify-center rounded border">
           <YoutubeIframe url={room?.videoUrl || ""} />
         </div>
-        <div className="flex flex-col rounded h-full w-1/5 border p-4">
+        <div className="flex min-h-0 w-1/5 flex-col rounded border p-4">
           <ScrollArea
-            className="flex-1 min-h-0"
+            className="min-h-0 flex-1 overflow-hidden"
             type="hover"
             ref={scrollAreaRef}
           >
-            {room?.messages?.map((message) => (
-              <div key={message.id} className="border p-2 rounded">
-                <strong>{message.sender}</strong>: {message.content}
-                <div className="text-xs text-gray-500">
-                  {new Date(message.timestamp).toLocaleTimeString()}
+            <div className="space-y-2 pr-2">
+              {messages?.map((message, index) => (
+                <div
+                  key={`${message.id}-${message.timestamp}-${index}`}
+                  className="rounded border p-2"
+                >
+                  <strong>{message.sender}</strong>: {message.content}
+                  <div className="text-xs text-gray-500">
+                    {new Date(message.timestamp).toLocaleTimeString()}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </ScrollArea>
           <form
             className="flex flex-col gap-2 mt-auto"
@@ -224,15 +293,6 @@ function RoomPage() {
           </form>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col justify-between items-center ">
-        <span>
-          Websocket state : {connected ? "🟢 Connected" : "🔴 Disconnected"}
-        </span>
-        <span>Users in room: {room?.memberCount}</span>
-        <Button variant="outline" className="w-full" onClick={leaveRoom}>
-          Leave Room
-        </Button>
-      </CardFooter>
       <Toaster />
     </Card>
   );

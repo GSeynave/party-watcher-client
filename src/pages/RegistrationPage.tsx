@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-function Register() {
+function RegistrationPage() {
   const [username, setUsername] = useState("");
   const [mailValue, setMailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
@@ -117,4 +117,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegistrationPage;
