@@ -37,7 +37,7 @@ function App() {
   return (
     <>
       <div className="flex flex-col w-screen h-screen">
-        <nav className="flex flex-row gap-4 p-4 bg-gray-200">
+        <nav className="flex flex-row gap-4 p-4 bg-yellow-100 border-b border-gray-300">
           <Link to="/" className="">
             Home
           </Link>

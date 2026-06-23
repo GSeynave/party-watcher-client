@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Eye } from "lucide-react";
 
 function Rooms() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ function Rooms() {
   }
 
   return (
-    <Card className="flex flex-col w-screen h-screen border border-gray-300 rounded-lg shadow-md p-4">
+    <Card className="flex h-full min-h-0 flex-col rounded">
       <CardHeader>
         <CardTitle className="text-2xl font-bold mb-4">Rooms</CardTitle>
         <Dialog>
@@ -110,8 +111,11 @@ function Rooms() {
                 key={room.id}
                 className="w-9/10 flex-col mt-4 mb-4 border border-gray-300 rounded-lg shadow-md  p-4"
               >
-                <CardHeader>
+                <CardHeader className="flex flex-row justify-between items-center">
                   <CardTitle>{room.name}</CardTitle>
+                  <div className="flex flex-row gap-2 items-center">
+                    <Eye /> {room.memberCount}
+                  </div>
                 </CardHeader>
                 <CardContent className="flex flex-row gap-2">
                   <div className="w-2/5">Img preview.</div>
@@ -126,12 +130,6 @@ function Rooms() {
                     Join Room
                   </Button>
                 </CardContent>
-                <CardFooter className="flex flex-row gap-1 justify-between">
-                  <p>
-                    Room owner: <i>Unknown</i>
-                  </p>
-                  <p>Current member watching: {room.memberCount}</p>
-                </CardFooter>
               </Card>
             ))}
           </ul>

@@ -1,155 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
 import { Eye } from "lucide-react";
-import Api from "../services/roomService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Room } from "../types/Room";
 import { Button } from "@/components/ui/button";
-import { getSocket, disconnectSocket } from "../socket";
 import { useNavigate, useParams } from "react-router";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input";
 import RoomService from "../services/roomService";
 import { YoutubeIframe } from "@/components/YoutubeIframe";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { Message } from "@/types/Message";
 import { useAuthContext } from "@/context/AuthContext";
+import useRoomSocket from "@/hooks/useRoomSocket";
+import api from "../services/roomService";
 
 function RoomPage() {
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const socket = getSocket();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const [connected, setConnected] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
   const [room, setRoom] = useState<Room>();
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [userCount, setUserCount] = useState(0);
 
-  function appendMessage(message: Message) {
-    setMessages((prev) => {
-      const alreadyAdded = prev.some(
-        (existing) =>
-          existing.id === message.id ||
-          (existing.senderId === message.senderId &&
-            existing.content === message.content &&
-            Math.abs(existing.timestamp - message.timestamp) < 3000),
-      );
+  const { connected, userCount, messages, setMessages, appendMessage } =
+    useRoomSocket(roomId);
 
-      if (alreadyAdded) {
-        return prev;
-      }
+  useEffect(() => {
+    if (!roomId) return;
 
-      return [...prev, message];
-    });
-  }
-
-  async function joinRoom() {
-    try {
-      setConnected(false);
-      await Api.joinRoom(roomId!);
-      setConnected(true);
-      console.log("Joined room via API:", roomId);
-      socket.emit("joinRoom", roomId);
-    } catch (error) {
-      console.error("Error fetching room data:", error);
-      setConnected(false);
-    }
-  }
-  async function fetchRoom() {
-    try {
-      const response = await Api.getRoomById(roomId!);
-      console.log("Fetched room data:", response);
-      setRoom(response);
-      setMessages(response.messages);
-    } catch (error) {
-      console.error("Error fetching room data:", error);
-    }
-  }
-
-  async function fetchRoomUserCount(roomId: string) {
-    try {
-      const response = await Api.getRoomUserCount(roomId);
-      console.log("Fetched count user:", response);
-      setUserCount(response);
-    } catch (error) {
-      console.error("Error fetching room data:", error);
-    }
-  }
-  function connectToWebsocket() {
-    socket.emit("connection");
-  }
-  function handleWebSocketConnect() {
-    socket.on("connect", () => {
-      setConnected(true);
-    });
-  }
-
-  function handleWebSocketDisconnect() {
-    socket.on("disconnect", () => {
-      setConnected(false);
-    });
-  }
-
-  function handleWebSocketError() {
-    socket.on("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-  }
-
-  function handleUserJoined() {
-    socket.on("userJoined", () => {
-      console.log("A new user has joined the room.");
-      fetchRoomUserCount(roomId!);
-      appendMessage({
-        id: `system-join-${Date.now()}`,
-        senderId: "system",
-        sender: "System",
-        content: "A new user has joined the room!",
-        timestamp: Date.now(),
-      });
-      toast.success("A new user has joined the room!");
-    });
-  }
-
-  function handleUserLeft() {
-    socket.on("userLeft", () => {
-      fetchRoomUserCount(roomId!);
-      appendMessage({
-        id: `system-left-${Date.now()}`,
-        senderId: "system",
-        sender: "System",
-        content: "A user has left the room.",
-        timestamp: Date.now(),
-      });
-    });
-  }
-  function handleNewMessage() {
-    socket.on("newMessage", ({ id, senderId, sender, content, timestamp }) => {
-      console.log("Received new message via WebSocket:");
-      const message: Message = {
-        id: id,
-        senderId: senderId,
-        sender: sender,
-        content: content,
-        timestamp: timestamp,
-      };
-      appendMessage(message);
-    });
-  }
-
-  function socketOffs() {
-    console.log("Cleaning up WebSocket event listeners");
-    socket.emit("leaveRoom", roomId);
-    socket.off("connect");
-    socket.off("disconnect");
-    socket.off("joinRoom");
-    socket.off("userJoined");
-    socket.off("userLeft");
-    socket.off("heartbeatAck");
-    disconnectSocket();
-  }
+    api
+      .getRoomById(roomId)
+      .then((data) => {
+        setRoom(data);
+        if (data.messages) setMessages(data.messages);
+      })
+      .catch((error) => console.error("Error fetching room data:", error));
+  }, [roomId, setMessages]);
 
   useEffect(() => {
     const viewport = scrollAreaRef.current?.querySelector<HTMLDivElement>(
@@ -160,42 +47,6 @@ function RoomPage() {
       viewport.scrollTop = viewport.scrollHeight;
     }
   }, [messages]);
-
-  useEffect(() => {
-    socket.on("heartbeatAck", (data) => {
-      console.log("WebSocket: ", data.message);
-    });
-
-    const interval = setInterval(() => {
-      socket.emit("heartbeat", { roomId: roomId });
-    }, 3000);
-
-    async function init() {
-      if (!roomId) {
-        throw new Error("roomId is required in URL parameters");
-      }
-      await fetchRoom();
-      await joinRoom();
-      await fetchRoomUserCount(roomId);
-    }
-    init();
-    connectToWebsocket();
-    handleWebSocketConnect();
-    handleWebSocketDisconnect();
-    handleWebSocketError();
-    handleUserJoined();
-    handleUserLeft();
-    handleNewMessage();
-
-    return () => {
-      socketOffs();
-      clearInterval(interval);
-    };
-  }, []);
-
-  function leaveRoom() {
-    navigate("/rooms");
-  }
 
   async function handleMessageSend() {
     if (!newMessage.trim()) {
@@ -225,10 +76,10 @@ function RoomPage() {
     setNewMessage("");
   }
   return (
-    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+    <Card className="flex h-full min-h-0 flex-col rounded">
       <CardHeader className="flex shrink-0 flex-row gap-2">
         <CardTitle>Room: {room?.name}</CardTitle>
-        <span className="flex flex-row  gap-2 flex-1">
+        <span className="flex flex-row  gap-2 flex-1 items-center ">
           <Eye />
           <div>{userCount}</div>
           <span className={connected ? "text-green-600" : "text-red-600"}>
@@ -239,7 +90,7 @@ function RoomPage() {
           <Button
             variant="outline"
             className="w-full bg-red-500 text-white hover:bg-red-600"
-            onClick={leaveRoom}
+            onClick={() => navigate("/rooms")}
           >
             Leave Room
           </Button>
@@ -250,7 +101,7 @@ function RoomPage() {
         <div className="flex min-h-0 w-4/5 items-center justify-center rounded border">
           <YoutubeIframe url={room?.videoUrl || ""} />
         </div>
-        <div className="flex min-h-0 w-1/5 flex-col rounded border p-4">
+        <div className="flex min-h-0 w-1/5 flex-col border-l border-gray-400 p-4">
           <ScrollArea
             className="min-h-0 flex-1 overflow-hidden"
             type="hover"
