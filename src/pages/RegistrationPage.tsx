@@ -5,6 +5,7 @@ import axios from "axios";
 import {
   EmailInput,
   PasswordInput,
+  UsernameInput,
 } from "../components/InputFields/InputHelper";
 import {
   Card,
@@ -75,53 +76,73 @@ function RegistrationPage() {
   }
 
   return (
-    <Card className="border flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
-      <CardHeader className="flex flex-col items-center">
-        <CardTitle className="text-2xl font-bold mb-4">Register</CardTitle>
+    <Card className="flex h-fit w-full max-w-[420px] min-h-0 flex-col rounded-2xl border border-orange-100/60 bg-[#FAF8F5] shadow-md m-auto mt-20 p-2 overflow-hidden">
+      <CardHeader className="flex flex-col items-center pt-6 pb-2">
+        <CardTitle className="text-2xl font-bold tracking-tight text-stone-800">
+          Create an Account
+        </CardTitle>
+        <p className="text-xs text-stone-400 mt-1">
+          Join the lounge and start watching together
+        </p>
       </CardHeader>
-      <CardContent>
-        <form>
-          <FieldSet>
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <Input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+
+      <CardContent className="pt-4">
+        <div className="space-y-4">
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col">
+            <FieldSet className="space-y-3">
+              <UsernameInput value={username} onChange={setUsername} />
+
+              {/* Ensure these custom sub-components match our theme's input styling */}
+              <EmailInput value={mailValue} onChange={setMailValue} />
+              <PasswordInput
+                value={passwordValue}
+                onChange={setPasswordValue}
               />
-            </Field>
-            <EmailInput value={mailValue} onChange={setMailValue} />
-            <PasswordInput value={passwordValue} onChange={setPasswordValue} />
-            <PasswordInput
-              label="Confirm Password"
-              value={confirmPasswordValue}
-              onChange={setConfirmPasswordValue}
-            />
-          </FieldSet>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={handleRegister}
-            className="mt-4"
-          >
-            Register
-          </Button>
-        </form>
-        <div>
-          {registerResponseType === "error" && (
-            <p className="text-red-500 font-bold">{registerResponse}</p>
-          )}
-          {registerResponseType === "success" && (
-            <p className="text-green-500 font-bold">{registerResponse}</p>
-          )}
+              <PasswordInput
+                label="Confirm Password"
+                value={confirmPasswordValue}
+                onChange={setConfirmPasswordValue}
+              />
+            </FieldSet>
+
+            {/* Primary action utilizing tactile charcoal/amber primitives */}
+            <Button
+              type="button"
+              onClick={handleRegister}
+              className="mt-6 w-full bg-stone-800 hover:bg-stone-700 text-amber-50 font-semibold rounded-xl shadow-xs transition-colors py-5"
+            >
+              Register
+            </Button>
+          </form>
+
+          {/* Styled feedback logs into clean alert cards */}
+          <div>
+            {registerResponseType === "error" && (
+              <div className="mt-2 rounded-xl bg-rose-50 border border-rose-100 p-3 text-center">
+                <p className="text-sm font-semibold text-rose-700">
+                  {registerResponse}
+                </p>
+              </div>
+            )}
+            {registerResponseType === "success" && (
+              <div className="mt-2 rounded-xl bg-emerald-50 border border-emerald-100 p-3 text-center">
+                <p className="text-sm font-semibold text-emerald-700">
+                  {registerResponse}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <p className="text-sm text-gray-500">
+
+      {/* Footer layout updated with matching warm typography weights */}
+      <CardFooter className="flex flex-col items-center pb-6 pt-3 border-t border-orange-100/30 bg-[#F4EFEA]/30">
+        <p className="text-sm text-stone-500 flex items-center gap-1">
           Already have an account?{" "}
           <Button
             variant="link"
             onClick={() => navigate("/login")}
-            className="text-blue-500 hover:underline"
+            className="p-0 h-auto font-bold text-amber-700 hover:text-amber-800 transition-colors hover:no-underline"
           >
             Login here
           </Button>

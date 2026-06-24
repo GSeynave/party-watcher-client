@@ -52,14 +52,25 @@ function LoginPage() {
   });
 
   return (
-    <Card className="border flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
-      <CardHeader className="flex flex-col items-center">
-        <CardTitle className="text-2xl font-bold mb-4">Login</CardTitle>
+    <Card className="flex h-fit w-full max-w-[400px] min-h-0 flex-col rounded-2xl border border-orange-100/60 bg-[#FAF8F5] shadow-md m-auto mt-20 p-2 overflow-hidden">
+      <CardHeader className="flex flex-col items-center pt-6 pb-2">
+        <CardTitle className="text-2xl font-bold tracking-tight text-stone-800">
+          Welcome Back
+        </CardTitle>
+        <p className="text-xs text-stone-400 mt-1">
+          Grab a drink and step into the lounge
+        </p>
       </CardHeader>
-      <CardContent>
-        <div>
-          <form>
-            <FieldSet>
+
+      <CardContent className="pt-4">
+        <div className="space-y-4">
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col">
+            {/* 
+          NOTE: Make sure your internal <EmailInput /> and <PasswordInput /> components
+          pass down classes like `rounded-xl`, `bg-white`, and `border-orange-100/70` 
+          to match the input fields to the theme!
+        */}
+            <FieldSet className="space-y-3">
               <EmailInput
                 value={usernameLoginValue}
                 onChange={setUsernameLoginValue}
@@ -69,29 +80,36 @@ function LoginPage() {
                 onChange={setPasswordLoginValue}
               />
             </FieldSet>
+
+            {/* Main Action Button using the deep tactile charcoal/amber palette */}
             <Button
-              variant="outline"
               type="button"
               onClick={handleLogin}
-              className="mt-4"
+              className="mt-6 w-full bg-stone-800 hover:bg-stone-700 text-amber-50 font-semibold rounded-xl shadow-xs transition-colors py-5"
             >
               Login
             </Button>
           </form>
-          <div>
-            {loginResponseType === "error" && (
-              <p className="text-red-500 font-bold">{loginResponse}</p>
-            )}
-          </div>
+
+          {/* Error handling alert window formatted beautifully */}
+          {loginResponseType === "error" && (
+            <div className="mt-2 rounded-xl bg-rose-50 border border-rose-100 p-3 text-center">
+              <p className="text-sm font-semibold text-rose-700">
+                {loginResponse}
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col items-center">
-        <p className="text-sm text-gray-500">
+
+      {/* Footer layout tuned with warm typography links */}
+      <CardFooter className="flex flex-col items-center pb-6 pt-2 border-t border-orange-100/30 bg-[#F4EFEA]/30">
+        <p className="text-sm text-stone-500 flex items-center gap-1">
           Don't have an account?{" "}
           <Button
             variant="link"
             onClick={() => navigate("/register")}
-            className="text-blue-500 hover:underline"
+            className="p-0 h-auto font-bold text-amber-700 hover:text-amber-800 transition-colors hover:no-underline"
           >
             Register here
           </Button>

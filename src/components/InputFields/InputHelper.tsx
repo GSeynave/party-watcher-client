@@ -48,6 +48,16 @@ function isYoutubeEmbedUrl(urlString: string): boolean {
   }
 }
 
+function validateUsername(value: string): string | null {
+  if (!value) {
+    return "Please fill in the username field.";
+  }
+  if (value.length < 3) {
+    return "Username must be at least 3 characters long.";
+  }
+  return null;
+}
+
 type fieldProps = {
   label?: string;
   value: string;
@@ -60,6 +70,11 @@ export function RoomUrlInput(props: fieldProps) {
 export function RoomNameInput(props: fieldProps) {
   return (
     <CustomInputField {...props} label="Name" validate={validateRoomName} />
+  );
+}
+export function UsernameInput(props: fieldProps) {
+  return (
+    <CustomInputField {...props} label="Username" validate={validateUsername} />
   );
 }
 export function EmailInput(props: fieldProps) {

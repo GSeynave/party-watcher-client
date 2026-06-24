@@ -36,21 +36,46 @@ function App() {
   const { loading, isAuthenticated } = useAuthContext();
   return (
     <>
-      <div className="flex flex-col w-screen h-screen">
-        <nav className="flex flex-row gap-4 p-4 bg-yellow-100 border-b border-gray-300">
-          <Link to="/" className="">
-            Home
-          </Link>
+      <div className="flex flex-col w-screen h-screen bg-[#F4EFEA]/40 text-stone-800 font-sans antialiased">
+        {/* Global Top Navbar: Swapped harsh pure white/gray for cozy lounge tones */}
+        <nav className="flex flex-row items-center justify-between gap-6 px-6 py-4 bg-[#FAF8F5] border-b border-orange-100/40 shadow-xs shrink-0">
+          <div className="flex flex-row items-center gap-6">
+            {/* Brand Logo Anchor: Swapped electric blue for an organic, deep warm amber */}
+            <Link
+              to="/"
+              className="text-xl font-bold tracking-tight text-amber-700 hover:text-amber-800 transition-colors"
+            >
+              party-watcher
+            </Link>
 
-          <ShowMenu isAuthenticated={isAuthenticated} />
+            {/* Warm layout divider line */}
+            <div className="hidden sm:block h-4 w-px bg-orange-100/60" />
+
+            <Link
+              to="/"
+              className="text-sm font-semibold text-stone-500 hover:text-stone-900 transition-colors"
+            >
+              Home
+            </Link>
+          </div>
+
+          {/* Auth Menu Layout wrapper */}
+          <div className="flex items-center gap-4 text-sm font-semibold text-stone-600">
+            <ShowMenu isAuthenticated={isAuthenticated} />
+          </div>
         </nav>
-        <div className="flex-1 min-h-0 overflow-hidden p-4">
+
+        {/* Route Screen Content Wrapper: Soft background tint to make internal dashboard workspace panels stand out */}
+        <div className="flex-1 min-h-0 overflow-hidden bg-[#F4EFEA]/30">
           <Routes>
             <Route
               path="/rooms"
               element={
                 <Restricted loading={loading} isAuthenticated={isAuthenticated}>
-                  <RoomList />
+                  {/* Kept padding here for the list view but matched cozy spacing sizing */}
+                  <div className="h-full min-h-0 p-6">
+                    <RoomList />
+                  </div>
                 </Restricted>
               }
             />
@@ -58,16 +83,47 @@ function App() {
               path="/room/:roomId"
               element={
                 <Restricted loading={loading} isAuthenticated={isAuthenticated}>
+                  {/* Stream room dashboard expands edge-to-edge seamlessly */}
                   <div className="h-full min-h-0">
                     <RoomPage />
                   </div>
                 </Restricted>
               }
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<LogoutPage />} />
-            <Route path="/register" element={<RegistrationPage />} />
-            <Route path="/*" element={<HomePage />} />
+
+            {/* Standard utility pages wrapped in unified lounge layout pads */}
+            <Route
+              path="/login"
+              element={
+                <div className="h-full overflow-y-auto p-6 flex items-center justify-center">
+                  <Login />
+                </div>
+              }
+            />
+            <Route
+              path="/logout"
+              element={
+                <div className="h-full overflow-y-auto p-6 flex items-center justify-center">
+                  <LogoutPage />
+                </div>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <div className="h-full overflow-y-auto p-6 flex items-center justify-center">
+                  <RegistrationPage />
+                </div>
+              }
+            />
+            <Route
+              path="/*"
+              element={
+                <div className="h-full overflow-y-auto p-6">
+                  <HomePage />
+                </div>
+              }
+            />
           </Routes>
         </div>
       </div>
