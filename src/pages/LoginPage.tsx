@@ -52,7 +52,7 @@ function LoginPage() {
   });
 
   return (
-    <Card className="flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
+    <Card className="border flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
       <CardHeader className="flex flex-col items-center">
         <CardTitle className="text-2xl font-bold mb-4">Login</CardTitle>
       </CardHeader>
@@ -69,7 +69,12 @@ function LoginPage() {
                 onChange={setPasswordLoginValue}
               />
             </FieldSet>
-            <Button variant="outline" type="button" onClick={handleLogin}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleLogin}
+              className="mt-4"
+            >
               Login
             </Button>
           </form>

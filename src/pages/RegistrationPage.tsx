@@ -16,7 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
+import { useNavigate } from "react-router";
 function RegistrationPage() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [mailValue, setMailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
@@ -73,7 +75,7 @@ function RegistrationPage() {
   }
 
   return (
-    <Card className="flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
+    <Card className="border flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
       <CardHeader className="flex flex-col items-center">
         <CardTitle className="text-2xl font-bold mb-4">Register</CardTitle>
       </CardHeader>
@@ -90,6 +92,7 @@ function RegistrationPage() {
             <EmailInput value={mailValue} onChange={setMailValue} />
             <PasswordInput value={passwordValue} onChange={setPasswordValue} />
             <PasswordInput
+              label="Confirm Password"
               value={confirmPasswordValue}
               onChange={setConfirmPasswordValue}
             />
@@ -115,10 +118,13 @@ function RegistrationPage() {
       <CardFooter>
         <p className="text-sm text-gray-500">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500">
+          <Button
+            variant="link"
+            onClick={() => navigate("/login")}
+            className="text-blue-500 hover:underline"
+          >
             Login here
-          </a>
-          .
+          </Button>
         </p>
       </CardFooter>
     </Card>

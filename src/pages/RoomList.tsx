@@ -2,28 +2,15 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import RoomService from "../services/roomService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import type { Room } from "../types/Room";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Eye } from "lucide-react";
+import CreateRoomForm from "@/components/CreateRoom";
 
 function Rooms() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [newRoomName, setNewRoomName] = useState("");
-  const [newRoomUrl, setNewRoomUrl] = useState(
-    "https://www.youtube.com/embed/y0sF5xhGreA",
-  );
 
   useEffect(() => {
     async function loadRooms() {
@@ -34,14 +21,6 @@ function Rooms() {
     loadRooms();
   }, []);
 
-  async function handleCreateRoom() {
-    console.log("Create room with name:", newRoomName);
-    const roomId = await RoomService.createRoom(newRoomName, newRoomUrl);
-    if (roomId) {
-      navigate(`/room/${roomId}`);
-    }
-  }
-
   async function handleJoinRoom(roomId: string) {
     navigate(`/room/${roomId}`);
   }
@@ -50,51 +29,9 @@ function Rooms() {
     <Card className="flex h-full min-h-0 flex-col rounded">
       <CardHeader>
         <CardTitle className="text-2xl font-bold mb-4">Rooms</CardTitle>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">Create a room</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold mb-2">
-                Create a room
-              </DialogTitle>
-              <DialogDescription className="flex flex-col gap-2">
-                Create and join your own room. Once created, it will be
-                available for others to join. You can also share the room link
-                with your friends.
-              </DialogDescription>
-            </DialogHeader>
-            <form className="flex flex-col gap-2">
-              <FieldGroup>
-                <Field>
-                  <FieldLabel>Room Name:</FieldLabel>
-                  <Input
-                    type="text"
-                    value={newRoomName}
-                    onChange={(e) => setNewRoomName(e.target.value)}
-                  ></Input>
-                </Field>
-                <Field>
-                  <FieldLabel>Video URL (YouTube embed link):</FieldLabel>
-                  <Input
-                    type="text"
-                    value={newRoomUrl}
-                    onChange={(e) => setNewRoomUrl(e.target.value)}
-                  ></Input>
-                </Field>
-
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={handleCreateRoom}
-                >
-                  Create Room
-                </Button>
-              </FieldGroup>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="mb-4">
+          <CreateRoomForm />
+        </div>
       </CardHeader>
 
       <CardContent>

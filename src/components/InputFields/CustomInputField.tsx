@@ -31,7 +31,7 @@ function CustomInputField({
           }}
         />
       </Field>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-xs font-medium text-red-500">{error}</p>}
     </>
   );
 }

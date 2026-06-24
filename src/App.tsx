@@ -7,6 +7,7 @@ import Login from "./pages/LoginPage.tsx";
 import RoomPage from "./pages/RoomPage";
 import { useAuthContext } from "./context/AuthContext";
 import LogoutPage from "./pages/LogoutPage.tsx";
+import HomePage from "./pages/HomePage.tsx";
 
 interface ShowMenuProps {
   isAuthenticated: boolean;
@@ -26,8 +27,7 @@ function ShowMenu({ isAuthenticated }: ShowMenuProps) {
   }
   return (
     <>
-      <Link to="/login">Login</Link>
-      <Link to="/register">Register</Link>
+      <Link to="/login">Login</Link> <Link to="/register">Register</Link>
     </>
   );
 }
@@ -67,7 +67,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/register" element={<RegistrationPage />} />
-            <Route path="/*" element={<Login />} />
+            <Route path="/*" element={<HomePage />} />
           </Routes>
         </div>
       </div>
