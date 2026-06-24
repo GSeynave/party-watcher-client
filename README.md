@@ -25,6 +25,19 @@ Under the hood, the client is engineered around a modular, reliable frontend sta
 
 ---
 
+## 🧩 Feature Highlights
+
+- **Room Creation :** Users can create and join virtual lounges, each with its own unique URL.
+  ![Room Creation](./resources/RoomCreation.jpg)
+
+- **See Existing Rooms :** Users can view a list of active rooms and join them.
+  ![Room List](./resources/RoomList.jpg)
+
+- **Real-Time Chat :** Users can chat with others in the room, with messages appearing instantly.
+  ![Chat](./resources/RoomChat.jpg)
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Core Engine:** React 18 & TypeScript
@@ -32,6 +45,16 @@ Under the hood, the client is engineered around a modular, reliable frontend sta
 - **State & Networking:** Axios (RESTful API Handshakes) & Socket.IO-Client (WebSockets)
 - **Routing:** React Router Dom
 - **Design System:** Tailwind CSS & Lucide Icons
+
+---
+
+Here i will list what's cluncky / missing or could be added for the better experience
+
+## 🔍 Known Limitations & Technical Trade-offs
+
+- **Technical (Socket Lifecycle & Heartbeats):** User presence updates currently rely on active state changes (like explicitly clicking the "Leave Room" button). If a user closes their browser tab or loses their connection abruptly, they may not be removed from the active user list instantly. Implementing a true WebSocket heartbeat/ping-pong system would solve this, but standard connection lifecycle listeners were deemed sufficient for this scope.
+- **User Experience (Video Player Synchronization):** The media workspace features an embedded YouTube player, but video play/pause states and timestamps are not globally synchronized across viewers. While full video synchronization would offer a more seamless watching experience, building a complex media-streaming synchronization engine was outside the design intentions of this specific client project.
+- **Feature (Room Interaction Limits):** The room layout is currently structured strictly around the video player and a live text chat feed. Interactive features that would enhance group engagement—such as a live poll system allowing users to suggest and vote on the next YouTube link to be played—were left out to keep the workspace interface streamlined and highly focused.
 
 ---
 
@@ -52,6 +75,8 @@ npm install
 {server_url}
 ```
 
+See : [Party Watcher (Server)](https://github.com/GSeynave/party-watcher-server) for the server-side implementation and configuration.
+
 ### 3. Execution Commands
 
 ```bash
@@ -60,13 +85,4 @@ npm run dev # Spin up the local development server
 npm run build # Compile an optimized production distribution bundle
 npm run lint # Execute code syntax and style passes
 npm run preview # Boot a local server to test the production build locally
-
-```
-
-```
-
-```
-
-```
-
 ```
