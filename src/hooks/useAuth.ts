@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Api from "../services/auth";
 
 type UserContext = {
+  username: string;
   userId: string;
   mail: string;
 };
@@ -20,7 +21,11 @@ function useAuth() {
     try {
       const response = await Api.getMe();
       console.log("User data fetched successfully:", response);
-      setUser({ userId: response.userId, mail: response.mail });
+      setUser({
+        username: response.username,
+        userId: response.userId,
+        mail: response.mail,
+      });
     } catch (error) {
       console.error("Error fetching user data:", error);
       setError("Failed to fetch user data");

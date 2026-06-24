@@ -1,6 +1,6 @@
 import "./App.css";
 import RegistrationPage from "./pages/RegistrationPage.tsx";
-import { Link, Route, Routes } from "react-router";
+import { Link, Route, Routes, useNavigate } from "react-router";
 import Restricted from "./guards/restricted";
 import RoomList from "./pages/RoomList";
 import Login from "./pages/LoginPage.tsx";
@@ -8,20 +8,70 @@ import RoomPage from "./pages/RoomPage";
 import { useAuthContext } from "./context/AuthContext";
 import LogoutPage from "./pages/LogoutPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "./components/ui/button.tsx";
+import type { UserContext } from "./types/UserContext.ts";
 
 interface ShowMenuProps {
   isAuthenticated: boolean;
+  user: UserContext;
 }
-function ShowMenu({ isAuthenticated }: ShowMenuProps) {
-  if (isAuthenticated) {
+function ShowMenu(props: ShowMenuProps) {
+  const navigate = useNavigate();
+  if (props.isAuthenticated) {
     return (
       <>
-        <Link to="/rooms" className="flex-1">
+        {/* 1. Navigation Link: Upgraded to look like an organic lounge nav option */}
+        <Link
+          to="/rooms"
+          className="text-sm font-semibold text-stone-600 hover:text-stone-900 transition-colors px-1 py-2"
+        >
           Rooms
         </Link>
-        <Link to="/logout" className="flex">
-          Disconnect
-        </Link>
+
+        {/* 2. User Action Menu Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            {/* Trigger Button: Soft cream outline with charcoal text and smooth curves */}
+            <Button
+              variant="outline"
+              className="border-orange-100/70 bg-white hover:bg-[#FAF8F5] text-stone-700 font-bold rounded-xl shadow-2xs transition-all gap-2"
+            >
+              {/* Added a cozy little user dot indicator */}
+              <span className="h-2 w-2 rounded-full bg-amber-600 shadow-2xs" />
+              {props.user.username}
+            </Button>
+          </DropdownMenuTrigger>
+
+          {/* Dropdown Frame: Softened to rounded-xl over our oatmeal background palette */}
+          <DropdownMenuContent className="w-48 p-1.5 rounded-xl border border-orange-100/60 bg-[#FAF8F5] shadow-md text-stone-700">
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="flex items-center px-3 py-2 text-sm font-medium rounded-lg cursor-pointer focus:bg-[#F4EFEA]/60 focus:text-stone-900 transition-colors">
+                Profile
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+
+            {/* Warm menu separator line */}
+            <DropdownMenuSeparator className="my-1 border-t border-orange-100/40" />
+
+            <DropdownMenuGroup>
+              {/* Logout action updated inside the dropdown menu using our warm destructive soft-rose hover */}
+              <DropdownMenuItem
+                onClick={() => navigate("/logout")} // Clean way to handle the action directly
+                className="flex items-center px-3 py-2 text-sm font-bold text-rose-600 rounded-lg cursor-pointer focus:bg-rose-50 focus:text-rose-700 transition-colors"
+              >
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </>
     );
   }
@@ -33,7 +83,7 @@ function ShowMenu({ isAuthenticated }: ShowMenuProps) {
 }
 
 function App() {
-  const { loading, isAuthenticated } = useAuthContext();
+  const { loading, user, isAuthenticated } = useAuthContext();
   return (
     <>
       <div className="flex flex-col w-screen h-screen bg-[#F4EFEA]/40 text-stone-800 font-sans antialiased">
@@ -61,7 +111,7 @@ function App() {
 
           {/* Auth Menu Layout wrapper */}
           <div className="flex items-center gap-4 text-sm font-semibold text-stone-600">
-            <ShowMenu isAuthenticated={isAuthenticated} />
+            <ShowMenu isAuthenticated={isAuthenticated} user={user} />
           </div>
         </nav>
 

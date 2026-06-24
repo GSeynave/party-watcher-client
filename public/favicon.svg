@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <!-- Definitions for cozy shadows and smooth gradients -->
+  <defs>
+    <filter id="lounge-shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#78716c" flood-opacity="0.12" />
+    </filter>
+    <filter id="screen-glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#b45309" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas: Oatmeal White -->
+  <rect width="100%" height="100%" fill="#FAF8F5" />
+
+  <!-- 1. BACKGROUND PLAN: The Immersive Screen -->
+  <g filter="url(#screen-glow)">
+    <!-- Outer Screen Frame (Warm Charcoal/Stone) -->
+    <rect x="100" y="50" width="600" height="340" rx="24" fill="#1C1A17" stroke="#2e2a24" stroke-width="4" />
+    <!-- Inner Screen Display (Deep Matte Obsidian) -->
+    <rect x="116" y="66" width="568" height="308" rx="14" fill="#11100e" />
+    <!-- Ambient Play Indicator Symbol (Soft Amber Glow) -->
+    <circle cx="400" cy="220" r="36" fill="#b45309" fill-opacity="0.2" />
+    <polygon points="392,204 416,220 392,236" fill="#f59e0b" />
+  </g>
+
+  <!-- 2. MIDGROUND PLAN: The Friends Group (Simplified shapes sitting behind the sofa backrest) -->
+  <g fill="#FAF8F5" stroke="#78716c" stroke-width="4" stroke-linejoin="round">
+    <!-- Person 1 (Left - Wide) -->
+    <circle cx="220" cy="280" r="30" />
+    <path d="M170,360 C170,320 200,320 220,320 C240,320 270,320 270,360" />
+
+    <!-- Person 2 (Mid-Left - Small) -->
+    <circle cx="315" cy="295" r="22" />
+    <path d="M280,360 C280,330 300,330 315,330 C330,330 350,330 350,360" />
+
+    <!-- Person 3 (Mid-Right - Medium) -->
+    <circle cx="410" cy="290" r="24" />
+    <path d="M370,360 C370,325 390,325 410,325 C430,325 450,325 450,360" />
+
+    <!-- Person 4 (Right - Large/Leaning) -->
+    <circle cx="530" cy="285" r="34" />
+    <path d="M475,360 C475,325 500,320 530,320 C560,320 585,325 585,360" />
+  </g>
+
+  <!-- 3. FOREGROUND PLAN: The Plush Lounge Sofa -->
+  <g filter="url(#lounge-shadow)">
+    <!-- Main Sofa Base Structure (Warm Soft Cream Linen) -->
+    <path d="M80,380 C80,350 110,350 140,350 L660,350 C690,350 720,350 720,380 L720,440 C720,460 700,470 680,470 L120,470 C100,470 80,460 80,440 Z" fill="#F4EFEA" stroke="#e6ded5" stroke-width="2" />
+    
+    <!-- Foreground Sofa Cushion Edge Line / Seam (Defines the depth) -->
+    <path d="M80,415 L720,415" stroke="#dcd3c9" stroke-width="4" stroke-linecap="round" />
+    
+    <!-- Soft Wooden Sofa Legs (Earthy Amber Accents) -->
+    <rect x="130" y="470" width="24" height="16" rx="4" fill="#b45309" />
+    <rect x="646" y="470" width="24" height="16" rx="4" fill="#b45309" />
+  </g>
+</svg>

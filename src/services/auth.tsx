@@ -25,6 +25,7 @@ type RegisterData = {
 };
 
 type UserContext = {
+  username: string;
   userId: string;
   mail: string;
   token: string;
@@ -40,7 +41,7 @@ async function postLogin(data: LoginData): Promise<UserContext> {
   });
 }
 
-async function postMe(): Promise<UserContext> {
+async function getMe(): Promise<UserContext> {
   const response = await axios.get(API_BASE_URL + "/users/me", {
     withCredentials: true,
   });
@@ -51,7 +52,7 @@ const auth = {
 
   postRegister,
   postLogin,
-  getMe: postMe,
+  getMe: getMe,
 };
 
 export default auth;
