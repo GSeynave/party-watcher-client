@@ -8,7 +8,13 @@ import {
 } from "../components/InputFields/InputHelper";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useAuthContext } from "@/context/AuthContext";
 import { FieldSet } from "@/components/ui/field";
 function LoginPage() {
@@ -46,8 +52,8 @@ function LoginPage() {
   });
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
+      <CardHeader className="flex flex-col items-center">
         <CardTitle className="text-2xl font-bold mb-4">Login</CardTitle>
       </CardHeader>
       <CardContent>
@@ -74,6 +80,18 @@ function LoginPage() {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="flex flex-col items-center">
+        <p className="text-sm text-gray-500">
+          Don't have an account?{" "}
+          <Button
+            variant="link"
+            onClick={() => navigate("/register")}
+            className="text-blue-500 hover:underline"
+          >
+            Register here
+          </Button>
+        </p>
+      </CardFooter>
     </Card>
   );
 }

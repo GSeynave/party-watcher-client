@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Field, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
   type?: string;
   validate?: (value: string) => string | null; // validation function that returns an error message or null if valid
 };
+
 function CustomInputField({
   label,
   value,
@@ -14,7 +16,8 @@ function CustomInputField({
   type = "text",
   validate,
 }: Props) {
-  const error = validate?.(value);
+  const [hasBeenModified, setHasBeenModified] = useState(false);
+  const error = hasBeenModified && validate?.(value);
   return (
     <>
       <Field>
@@ -22,11 +25,13 @@ function CustomInputField({
         <Input
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setHasBeenModified(true);
+          }}
         />
       </Field>
-
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </>
   );
 }

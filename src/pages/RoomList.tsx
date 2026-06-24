@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import RoomService from "../services/roomService";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +22,7 @@ function Rooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomUrl, setNewRoomUrl] = useState(
-    "https://www.youtube.com/embed/CNsghpC7Aig",
+    "https://www.youtube.com/embed/y0sF5xhGreA",
   );
 
   useEffect(() => {

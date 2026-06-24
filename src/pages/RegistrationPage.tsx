@@ -6,10 +6,16 @@ import {
   EmailInput,
   PasswordInput,
 } from "../components/InputFields/InputHelper";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
 function RegistrationPage() {
   const [username, setUsername] = useState("");
   const [mailValue, setMailValue] = useState("");
@@ -67,34 +73,27 @@ function RegistrationPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="flex h-fit w-fit min-h-0 flex-col rounded justify-center items-center m-auto mt-20">
+      <CardHeader className="flex flex-col items-center">
         <CardTitle className="text-2xl font-bold mb-4">Register</CardTitle>
       </CardHeader>
       <CardContent>
         <form>
-          <Label>
-            Username:
-            <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </Label>
-          <Label>
-            Mail:
+          <FieldSet>
+            <Field>
+              <FieldLabel>Username</FieldLabel>
+              <Input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </Field>
             <EmailInput value={mailValue} onChange={setMailValue} />
-          </Label>
-          <Label>
-            Password:
             <PasswordInput value={passwordValue} onChange={setPasswordValue} />
-          </Label>
-          <Label>
-            Confirm Password:
             <PasswordInput
               value={confirmPasswordValue}
               onChange={setConfirmPasswordValue}
             />
-          </Label>
+          </FieldSet>
           <Button
             variant="outline"
             type="button"
@@ -113,6 +112,15 @@ function RegistrationPage() {
           )}
         </div>
       </CardContent>
+      <CardFooter>
+        <p className="text-sm text-gray-500">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-500">
+            Login here
+          </a>
+          .
+        </p>
+      </CardFooter>
     </Card>
   );
 }

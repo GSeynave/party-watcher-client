@@ -1,11 +1,13 @@
 // socket.ts
 import { io, Socket } from "socket.io-client";
+import { config } from "./utils/config";
 
 let socket: Socket | null = null;
 
 export function getSocket(): Socket {
+  const API_BASE_URL = config.SERVER_HOST + ":" + config.SERVER_PORT;
   if (!socket) {
-    socket = io("http://localhost:3000", { withCredentials: true });
+    socket = io(API_BASE_URL, { withCredentials: true });
   }
   return socket;
 }
