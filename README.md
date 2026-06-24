@@ -48,8 +48,6 @@ Under the hood, the client is engineered around a modular, reliable frontend sta
 
 ---
 
-Here i will list what's cluncky / missing or could be added for the better experience
-
 ## 🔍 Known Limitations & Technical Trade-offs
 
 - **Technical (Socket Lifecycle & Heartbeats):** User presence updates currently rely on active state changes (like explicitly clicking the "Leave Room" button). If a user closes their browser tab or loses their connection abruptly, they may not be removed from the active user list instantly. Implementing a true WebSocket heartbeat/ping-pong system would solve this, but standard connection lifecycle listeners were deemed sufficient for this scope.
