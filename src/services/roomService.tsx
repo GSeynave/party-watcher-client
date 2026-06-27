@@ -2,8 +2,7 @@ import type { Room } from "@/types/Room";
 import axios from "axios";
 import { config } from "../utils/config.ts";
 
-const API_BASE_URL =
-  config.SERVER_HOST + ":" + config.SERVER_PORT + "/api/rooms";
+const API_BASE_URL = config.SERVER_HOST + "/api/rooms";
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,

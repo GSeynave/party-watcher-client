@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "../utils/config.ts";
 
-const API_BASE_URL = config.SERVER_HOST + ":" + config.SERVER_PORT + "/api";
+const API_BASE_URL = config.SERVER_HOST + "/api";
 async function getTestResponse(): Promise<string> {
   try {
     const response = await axios.get(API_BASE_URL + "/test", {

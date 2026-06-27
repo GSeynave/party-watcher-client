@@ -10,5 +10,4 @@ function getRequiredEnv(name: keyof ImportMetaEnv): string {
 
 export const config = {
   SERVER_HOST: getRequiredEnv("VITE_SERVER_HOST"),
-  SERVER_PORT: getRequiredEnv("VITE_SERVER_PORT"),
 };
