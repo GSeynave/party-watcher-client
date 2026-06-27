@@ -21,7 +21,7 @@ import type { UserContext } from "./types/UserContext.ts";
 
 interface ShowMenuProps {
   isAuthenticated: boolean;
-  user: UserContext;
+  user: UserContext | null;
 }
 function ShowMenu(props: ShowMenuProps) {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ function ShowMenu(props: ShowMenuProps) {
             >
               {/* Added a cozy little user dot indicator */}
               <span className="h-2 w-2 rounded-full bg-amber-600 shadow-2xs" />
-              {props.user.username}
+              {props.user?.username}
             </Button>
           </DropdownMenuTrigger>
 

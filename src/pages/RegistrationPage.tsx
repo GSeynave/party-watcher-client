@@ -15,8 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
+import { FieldSet } from "@/components/ui/field";
 import { useNavigate } from "react-router";
 function RegistrationPage() {
   const navigate = useNavigate();

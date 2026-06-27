@@ -6,8 +6,14 @@ let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   const API_BASE_URL = config.SERVER_HOST + ":" + config.SERVER_PORT;
+  const authorizationToken = localStorage.getItem("token");
   if (!socket) {
-    socket = io(API_BASE_URL, { withCredentials: true });
+    socket = io(API_BASE_URL, {
+      withCredentials: true,
+      extraHeaders: {
+        Authorization: `Bearer ${authorizationToken}`,
+      },
+    });
   }
   return socket;
 }
